@@ -1,0 +1,113 @@
+
+# the KNN (self code)
+
+# Importing libraries
+import pandas as pd
+import numpy as np
+import math
+import operator
+
+
+# Importing data 
+iris = pd.read_csv('iris.csv')
+
+
+print(iris.head(5)) 
+
+
+# In[8]:
+
+
+# Defining a function which calculates euclidean distance between two data points
+def euclideanDistance(train, test, length):
+    distance = 0
+    for x in range(length):
+        distance += np.square(train[x] - test[x])
+    return np.sqrt(distance)
+
+
+# In[9]:
+
+
+# Defining our KNN model
+def knn(training, test, k):
+ 
+    distances = {}
+    sort = {}
+ 
+    length = test.shape[1]
+    
+    
+    # Calculating euclidean distance between each row of training data and test data
+    for x in range(len(training)):
+                
+        dist = euclideanDistance(test, training.iloc[x], length)
+
+        distances[x] = dist[0]        
+ 
+    # Sorting them on the basis of distance
+    sorted_d = sorted(distances.items(), key=operator.itemgetter(1))
+     
+    neighbors = []
+    
+    # Extracting top k neighbors
+    for x in range(k):
+        neighbors.append(sorted_d[x][0])
+    
+    classVotes = {}
+    
+    
+    # Calculating the most freq class in the neighbors
+    for x in range(len(neighbors)):
+        response = training.iloc[neighbors[x]][-1]
+ 
+        if response in classVotes:
+            classVotes[response] += 1
+        else:
+            classVotes[response] = 1    
+
+    sortedVotes = sorted(classVotes.items(), key=operator.itemgetter(1), reverse=True)
+    return(sortedVotes[0][0], neighbors)    
+
+
+testSet = [[7.2, 3.6, 5.1, 2.5]]
+test = pd.DataFrame(testSet)
+
+# Setting number of neighbors = 1
+
+
+print('\n\nWith 1 Nearest Neighbour \n\n')
+k = 1
+
+# Running KNN model
+result,neigh = knn(iris, test, k)
+
+# Predicted class
+print('\nPredicted Class of the datapoint = ', result)
+
+# Nearest neighbor
+print('\nNearest Neighbour of the datapoints = ',neigh)
+
+print('\n\nWith 3 Nearest Neighbours\n\n')
+# Setting number of neighbors = 3 
+k = 3 
+# Running KNN model 
+result,neigh = knn(data, test, k) 
+
+# Predicted class 
+print('\nPredicted class of the datapoint = ',result)
+
+# Nearest neighbor
+print('\nNearest Neighbours of the datapoints = ',neigh)
+
+print('\n\nWith 5 Nearest Neighbours\n\n')
+# Setting number of neighbors = 3 
+k = 5
+# Running KNN model 
+result,neigh = knn(data, test, k) 
+
+# Predicted class 
+print('\nPredicted class of the datapoint = ',result)
+
+# Nearest neighbor
+print('\nNearest Neighbours of the datapoints = ',neigh)
